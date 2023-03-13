@@ -1,0 +1,15 @@
+﻿<?xml version ="1.0" encoding="utf-8"?>
+<RunSettings>
+	<TestRunParameters>
+		<Parameter name="firstNameField" value="Pritesh" />
+		<Parameter name="lastNameField" value="Panchal" />
+		<Parameter name="companyNameField" value="NFocus" />
+		<Parameter name="addressField1" value="e-Innovation Centre Telford" />
+		<Parameter name="addressField2" value="Telford" />
+		<Parameter name="cityField" value="Telford" />
+		<Parameter name="countyField" value="Telford" />
+		<Parameter name="postcodeField" value="TF2 9FT" />
+		<Parameter name="phoneNumberField" value="0370 242 6235" />
+		<Parameter name="emailField" value="pritesh.panchal@nfocus.co.uk" />
+	</TestRunParameters>
+</RunSettings>
