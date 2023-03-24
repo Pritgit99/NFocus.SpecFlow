@@ -17,22 +17,23 @@ namespace SpecFlowProject.POMClasses
         }
 
         //Locators
-        IWebElement accountLink => _driver.FindElement(By.LinkText("My account"));
+        IWebElement _accountLink => _driver.FindElement(By.LinkText("My account"));
 
-        IWebElement orderNumber => _driver.FindElement(By.CssSelector("#post-6 > div > div > div > ul > li.woocommerce-order-overview__order.order > strong"));
+        IWebElement _orderNumber => _driver.FindElement(By.CssSelector("div > ul > li.woocommerce-order-overview__order.order > strong"));
 
 
         //service method
         public void AccountPage()
         {
-            accountLink.Click();
+            _accountLink.Click();
 
         }
 
+        //Captures the order number on the confirmation page
         public string GetOrderNumber() //Obtains the order number once a user places an order and stores it
         {
             
-            return orderNumber.Text;
+            return _orderNumber.Text;
         }
 
     }

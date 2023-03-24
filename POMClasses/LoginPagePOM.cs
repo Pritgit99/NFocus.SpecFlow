@@ -15,26 +15,28 @@ namespace SpecFlowProject.POMClasses
         {
             this._driver = driver;
         }
-        IWebElement usernameField => _driver.FindElement(By.Id("username"));
-        IWebElement passwordField => _driver.FindElement(By.Id("password"));
-        IWebElement loginButton => _driver.FindElement(By.Name("login"));
+        IWebElement _usernameField => _driver.FindElement(By.Id("username"));
+        IWebElement _passwordField => _driver.FindElement(By.Id("password"));
+        IWebElement _loginButton => _driver.FindElement(By.Name("login"));
 
+
+        //Finds the login fields and sends values based on how they are stored.
         public void SetUsername(string username)
         {
-            usernameField.Clear();
-            usernameField.SendKeys(username);
+            _usernameField.Clear();
+            _usernameField.SendKeys(username);
             
         }
 
         public void SetPassword(string password)
         {
-            passwordField.Clear();
-            passwordField.SendKeys(password);
+            _passwordField.Clear();
+            _passwordField.SendKeys(password);
         }
 
         public void ClickLogin()
         {
-            loginButton.Click();
+            _loginButton.Click();
         }
 
     }

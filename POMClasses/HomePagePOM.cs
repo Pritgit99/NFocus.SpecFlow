@@ -17,13 +17,13 @@ namespace SpecFlowProject.POMClasses
         }
 
         //Locators
-       IWebElement myaccountLink => _driver.FindElement(By.LinkText("My account"));
+       IWebElement _myaccountLink => _driver.FindElement(By.LinkText("My account"));
 
 
         //service method
         public void MyAccountPage()
         {
-            myaccountLink.Click(); //Directs users to the account page 
+            _myaccountLink.Click(); //Directs users to the account page 
 
         }
              

@@ -9,20 +9,27 @@ using SpecFlowProject.POMClasses;
 using OpenQA.Selenium.Support.UI;
 using OpenQA.Selenium.Firefox;
 using NUnit.Framework;
+using static SpecFlowProject.Support.HelperMethods;
 
-namespace SpecFlowProject.Support
+
+namespace SpecFlowProject.Hooks
 {
 
 
     [Binding]
-    internal class Hooks
+    public class Hooks
     {
-        public static IWebDriver driver;
+        private IWebDriver _driver;
         protected string baseUrl;
-        protected string browser = "chrome";
+        protected string browser;
+        private readonly ScenarioContext _scenarioContext;
+        public Hooks(ScenarioContext scenarioContext)
+        {
+            _scenarioContext = scenarioContext;
+        }
 
         [Before]
-        public void SetUp()
+        public void SetUp() //Responsible for setting up the webpage and geting the browser from the runsettings file
         {
             browser = TestContext.Parameters["browser"];
             Console.WriteLine("Read in browser var from command line: " + browser);
@@ -30,51 +37,37 @@ namespace SpecFlowProject.Support
             switch (browser)
             {
                 case "chrome":
-                    driver = new ChromeDriver(); break;
+                    _driver = new ChromeDriver(); break;
                 case "firefox":
-                    driver = new FirefoxDriver(); break;
+                    _driver = new FirefoxDriver(); break;
                 default:
                     Console.WriteLine("Unknown browser, starting chrome");
-                    driver = new ChromeDriver();
+                    _driver = new ChromeDriver();
                     break;
             }
 
-            driver.Manage().Window.Maximize();
-            driver.Url = "https://www.edgewordstraining.co.uk/demo-site/my-account/"; //opens the site
 
-            LoginPagePOM loginPage = new LoginPagePOM(driver);
+            _driver.Manage().Window.Maximize();
+            _scenarioContext["driver"] = _driver;
+            _driver.Url = "https://www.edgewordstraining.co.uk/demo-site/my-account/"; //opens the site
 
-            loginPage.SetUsername("pritesh.panchal@nfocus.co.uk");
-            string login_password = Environment.GetEnvironmentVariable("loginpassword"); //Using an environment variable to get the password for security and data protection
-            var passwordField = driver.FindElement(By.Id("password"));
-            driver.FindElement(By.Id("password")).SendKeys(login_password);
-            loginPage.ClickLogin();
-   
+            NavBarPOM clearNotice = new NavBarPOM(_driver);
+            clearNotice.DismissNotice();
 
-            MyAccountPagePOM goToShopPage = new MyAccountPagePOM(driver); //This block of code directs you to shop page and clears any overlapping elements
-            goToShopPage.GoToShop();
-
-            ShopPagePOM shopPage = new ShopPagePOM(driver);
-            shopPage.DismissNotice();
-
-            IWebElement randomAddToCartLink = shopPage.SelectRandomAddToCartLink(); //uses a random generator to select an item at random
-            randomAddToCartLink.Click();
-            
-            var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(3));
-            wait.Until(drv => drv.FindElement(By.LinkText("View cart")).Displayed);
-            shopPage.ViewCart();
-            
         }
 
         [After]
-        public void TearDown() //After test actions
+        public void TearDown() //After test actions to clear the cart and logout
         {
-            HomePagePOM homePage = new HomePagePOM(driver);
-            homePage.MyAccountPage();
+            NavBarPOM navBar = new NavBarPOM(_driver);
+            navBar.GoToCart();
+            CartPagePOM cartPage = new CartPagePOM(_driver);
+            cartPage.ClearCart();
 
-            MyAccountPagePOM logOut = new MyAccountPagePOM(driver);
+            NavBarPOM logOut = new NavBarPOM(_driver);
+            logOut.MyAccountPage();
             logOut.Logout();
-            // driver.Quit();
+            _driver.Quit();
+            }
         }
     }
-}

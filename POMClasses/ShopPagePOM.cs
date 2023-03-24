@@ -1,4 +1,5 @@
 ﻿using OpenQA.Selenium;
+using SpecFlowProject.Support;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,34 +18,35 @@ namespace SpecFlowProject.POMClasses
 
         //Locators
 
-        IWebElement addToCart => _driver.FindElement(By.LinkText("Add to cart"));
-        IWebElement viewCart => _driver.FindElement(By.LinkText("View cart"));
-        IWebElement dismissNotice => _driver.FindElement(By.ClassName("woocommerce-store-notice__dismiss-link"));
-        IList<IWebElement> addToCartLinks => _driver.FindElements(By.LinkText("Add to cart"));
+        IWebElement _addToCart => _driver.FindElement(By.LinkText("Add to cart"));
+        IWebElement _viewCart => _driver.FindElement(By.LinkText("View cart"));
+        IList<IWebElement> _addToCartLinks => _driver.FindElements(By.LinkText("Add to cart"));
 
 
-        //service method
-
-        public IWebElement SelectRandomAddToCartLink()
+        /*This is a random generator that selects items at random to be added to cart and then finds the sibling element so the name of the
+          item can be logged*/
+        public string SelectRandomAddToCartLink()
         {
-            
+
             Random random = new Random();
-            return addToCartLinks[random.Next(addToCartLinks.Count)];
+            IWebElement randomAddToCartLink = _addToCartLinks[random.Next(_addToCartLinks.Count)];  //Randomly selects an item  
+            IWebElement liElement = randomAddToCartLink.FindElement(By.XPath("..")); //Finds the parent element to locate item name
+            IWebElement h2Element = liElement.FindElement(By.TagName("h2")); //finds the item name which is a h2 tag
+            string item = h2Element.Text;  //stores item name in variable to be called in step definition file and then logged
+            randomAddToCartLink.Click();
+            return item;
         }
 
         public void AddToCart()
         {
-            addToCart.Click();
+            _addToCart.Click();
         }
 
         public void ViewCart()
         {
-            viewCart.Click();
+            HelperMethods.WaitForElement(By.LinkText("View cart"), 3, _driver);
+            _viewCart.Click();
         }
 
-        public void DismissNotice()
-        {
-            dismissNotice.Click();
-        }
     }
 }

@@ -1,27 +1,18 @@
 ﻿Feature: PlaceOrder
 
-A short summary of the feature
+This BDD file consists of two scenarios that test the functionality of an e-commerce website: the first scenario checks whether a coupon code is
+applied correctly to the cart, and the second scenario ensures that a placed order appears in the user's order history.
 
 
-Background: 
-Given I am on the cart page with an item in my basket
+Background:
+Given i am logged in on the shop page
 
-@tag1
-Scenario: Check if coupon discount is correct
-	When I enter edgewords
-	And I click Apply
-	Then There should be a 15% discount
+Scenario: Apply coupon discount
+When I add an item to my cart
+And I apply the coupon code "edgewords"
+Then a discount of 15% should be applied to my basket total
 
-
-@tag1
-Scenario: Place successful order
-	When I click proceed to checkout
-	And I place order
-	Then The order number displayed should also be on the orders page
-
-
-
-
-
-
-
+Scenario: View new order in order history
+When I add an item to my cart
+And I go through checkout
+Then the order number shown should be on the order history page

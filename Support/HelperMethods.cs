@@ -14,7 +14,7 @@ using NUnit.Framework;
 namespace SpecFlowProject.Support;
 
 
-internal class HelperMethods
+public class HelperMethods
 {
     private IWebDriver _driver;
 
@@ -22,19 +22,31 @@ internal class HelperMethods
     {
         this._driver = driver;
     }
-
+    
+    //Multiple waits that are used in different context
+    public static void WaitForElDisplayed(By locator, int timeToWaitInSeconds, IWebDriver driver)
+    {
+        WebDriverWait wait2 = new WebDriverWait(driver, TimeSpan.FromSeconds(timeToWaitInSeconds));
+        wait2.Until(drv => drv.FindElement(locator).Displayed);
+    }
 
     public static IWebElement WaitForElement(By locator, int timeToWaitInSeconds, IWebDriver driver) // used to apply waits around the program
     {
         WebDriverWait waitForElement = new WebDriverWait(driver, TimeSpan.FromSeconds(timeToWaitInSeconds));
         return waitForElement.Until(drv => drv.FindElement(locator));
-
     }
 
-    public static void TakeScreenshotOfElement(IWebDriver driver, By locator, string filename) //take a screenshot of bug/errors
+    public static void WaitFor(Func<bool> condition, int timeoutInSeconds, IWebDriver driver)
     {
-        IWebElement ssdriver = driver.FindElement(locator);
-        ITakesScreenshot ssBug = ssdriver as ITakesScreenshot;
+        WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(timeoutInSeconds));
+        wait.Until(d => condition());
+    }
+
+    //Used to take screenshots of bugs that occur
+    public static void TakeScreenshotOfElement(IWebDriver driver, IWebElement element, string filename) //take a screenshot of bug/errors
+    {
+        ITakesScreenshot ssBug = driver as ITakesScreenshot;
+        Screenshot screenshot = ssBug.GetScreenshot();
         var screenshotForm = ssBug.GetScreenshot();
         string timeCaptured = DateTime.Now.ToString("yyyyMMdd_HHmmss");
 
@@ -43,6 +55,19 @@ internal class HelperMethods
         TestContext.WriteLine("Screenshot taken - see report");
         TestContext.AddTestAttachment(@"C:\Users\PriteshPanchal\Documents\BugScreenshots\" + timeCaptured +" " + filename);
 
+    }
+
+    //Tests for null values when fetching from runsettings file
+    public static string GetParameterValue(string parameterName)
+    {
+        string parameterValue = TestContext.Parameters[parameterName];
+
+        if (string.IsNullOrEmpty(parameterValue))
+        {
+            throw new ArgumentException($"The parameter '{parameterName}' is null or empty in the test settings.");
+        }
+
+        return parameterValue;
     }
 
 }
